@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正在前往影视中心...</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8E2DE2, #4A00E0);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .loading-container {
+            margin-bottom: 40px;
+        }
+        
+        .loading-animation {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+        }
+        
+        .film-reel {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #e74c3c 30%, transparent 30.5%);
+            background-size: 20px 20px;
+            border-radius: 50%;
+            top: 10px;
+            left: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .film-reel:before, .film-reel:after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .film-reel:after {
+            width: 10px;
+            height: 10px;
+            background: #333;
+        }
+        
+        .spinner {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top: 5px solid #e74c3c;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .icon {
+            font-size: 3.5rem;
+            color: #e74c3c;
+            margin-bottom: 25px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .description {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .destination {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px 0;
+            border-left: 5px solid #e74c3c;
+        }
+        
+        .destination h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #e74c3c;
+        }
+        
+        .url {
+            font-family: monospace;
+            font-size: 1.1rem;
+            word-break: break-all;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        .countdown {
+            font-size: 1.5rem;
+            margin: 30px 0;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .countdown-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 50%;
+            margin: 0 5px;
+        }
+        
+        .manual-link {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(90deg, #e74c3c, #ff6b6b);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c, #ff6b6b);
+            width: 0%;
+            border-radius: 4px;
+            transition: width 5s linear;
+        }
+        
+        .film-strip {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            gap: 10px;
+        }
+        
+        .film-cell {
+            width: 40px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            animation: filmFlash 2s infinite;
+        }
+        
+        .film-cell:nth-child(2) { animation-delay: 0.2s; }
+        .film-cell:nth-child(3) { animation-delay: 0.4s; }
+        .film-cell:nth-child(4) { animation-delay: 0.6s; }
+        .film-cell:nth-child(5) { animation-delay: 0.8s; }
+        
+        @keyframes filmFlash {
+            0%, 100% { background: rgba(255, 255, 255, 0.1); }
+            50% { background: rgba(231, 76, 60, 0.6); }
+        }
+        
+        .footer {
+            margin-top: 40px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .description {
+                font-size: 1.1rem;
+            }
+            
+            .loading-animation {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .film-reel {
+                width: 80px;
+                height: 80px;
+                top: 10px;
+                left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loading-container">
+            <div class="loading-animation">
+                <div class="film-reel"></div>
+                <div class="spinner"></div>
+            </div>
+            <div class="icon">
+                <i class="fas fa-film"></i>
+            </div>
+        </div>
+        
+        <h1>正在前往影视中心</h1>
+        
+        <p class="description">
+            我们正在为您跳转到影视中心页面，海量影视资源等待您的探索...
+        </p>
+        
+        <div class="film-strip">
+            <div class="film-cell"></div>
+            <div class="film-cell"></div>
+            <div class="film-cell"></div>
+            <div class="film-cell"></div>
+            <div class="film-cell"></div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="destination">
+            <h3>目标地址：</h3>
+            <div class="url">http://www.sunnb.top:8096</div>
+        </div>
+        
+        <div class="countdown">
+            页面将在 <span id="countdown" class="countdown-number">5</span> 秒后自动跳转
+        </div>
+        
+        <div class="manual-link">
+            <p style="margin-bottom: 20px;">如果长时间没有跳转，请点击下方按钮：</p>
+            <a href="http://www.sunnb.top:8096" class="btn" id="manualBtn">
+                <i class="fas fa-external-link-alt"></i> 立即访问影视中心
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p><i class="fas fa-info-circle"></i> 此页面将在倒计时结束后自动跳转</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let countdown = 5; // 倒计时5秒
+            const countdownElement = document.getElementById('countdown');
+            const progressBar = document.getElementById('progressBar');
+            const manualBtn = document.getElementById('manualBtn');
+            let redirectTimer;
+            
+            // 开始倒计时
+            function startCountdown() {
+                // 进度条动画
+                progressBar.style.width = '100%';
+                
+                // 数字倒计时
+                const countdownInterval = setInterval(function() {
+                    countdown--;
+                    countdownElement.textContent = countdown;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        // 倒计时结束后跳转
+                        redirectToMovie();
+                    }
+                }, 1000);
+                
+                // 设置5秒后自动跳转
+                redirectTimer = setTimeout(redirectToMovie, 5000);
+            }
+            
+            // 跳转函数
+            function redirectToMovie() {
+                // 防止重复跳转
+                if (window.hasRedirected) return;
+                window.hasRedirected = true;
+                
+                // 显示跳转中提示
+                countdownElement.textContent = '0';
+                document.querySelector('h1').textContent = '正在跳转...';
+                
+                // 实际跳转
+                window.location.href = 'http://www.sunnb.top:8096';
+            }
+            
+            // 开始倒计时
+            startCountdown();
+            
+            // 点击按钮立即跳转
+            manualBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                clearTimeout(redirectTimer);
+                redirectToMovie();
+            });
+            
+            // 页面加载动画
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
